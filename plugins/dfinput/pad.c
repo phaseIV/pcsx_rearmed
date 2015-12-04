@@ -201,6 +201,10 @@ static void do_cmd2(unsigned char value)
 				case 1: // mode 1 - analog mode
 					buf[5] = PSE_PAD_TYPE_ANALOGPAD;
 					break;
+
+				case 2: // mode 2 - negcon mode
+					buf[5] = PSE_PAD_TYPE_NEGCON;
+					break;
 			}
 			break;
 	}
@@ -298,7 +302,18 @@ void pad_init(void)
 	PAD2_readPort2(&padstate[1].pad);
 
 	for (i = 0; i < 2; i++) {
-		padstate[i].PadID = padstate[i].pad.controllerType == PSE_PAD_TYPE_ANALOGPAD ? 0x73 : 0x41;
-		padstate[i].PadMode = padstate[i].pad.controllerType == PSE_PAD_TYPE_ANALOGPAD;
+		switch (padstate[i].pad.controllerType)
+		{
+            case PSE_PAD_TYPE_NEGCON:
+                padstate[i].PadID = padstate[i].pad.controllerType == PSE_PAD_TYPE_NEGCON ? 0x23 : 0x41;
+                padstate[i].PadMode = padstate[i].pad.controllerType == PSE_PAD_TYPE_NEGCON;
+                break;
+            case PSE_PAD_TYPE_ANALOGPAD:
+                padstate[i].PadID = padstate[i].pad.controllerType == PSE_PAD_TYPE_ANALOGPAD ? 0x73 : 0x41;
+                padstate[i].PadMode = padstate[i].pad.controllerType == PSE_PAD_TYPE_ANALOGPAD;
+                break;
+            default:
+                break;
+		}
 	}
 }

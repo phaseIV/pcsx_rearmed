@@ -597,7 +597,7 @@ static void update_input(void)
 	unsigned int emu_act;
 
 	in_update(actions);
-	if (in_type1 == PSE_PAD_TYPE_ANALOGPAD)
+	if (in_type1 == PSE_PAD_TYPE_ANALOGPAD || in_type1 == PSE_PAD_TYPE_NEGCON)
 		update_analogs();
 	emu_act = actions[IN_BINDTYPE_EMU];
 	in_state_gun = (emu_act & SACTION_GUN_MASK) >> SACTION_GUN_TRIGGER;
