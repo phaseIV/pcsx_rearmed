@@ -1309,6 +1309,8 @@ void retro_run(void)
                 in_a2[0] = 128;
         } else {
             in_a2[0] = 128 + (val - 128) * pad1sens;
+            if(in_a2[0] < 0) in_a2[0] = 0;
+            if(in_a2[0] > 255) in_a2[0] = 255;
         }
 
 		/* thrust and fire */
@@ -1346,7 +1348,9 @@ void retro_run(void)
             } else if (val == 128)
                 in_a4[0] = 128;
         } else {
-            in_a4[0] = 128 + (val - 128) * pad2sens;;
+            in_a4[0] = 128 + (val - 128) * pad2sens;
+            if(in_a4[0] < 0) in_a4[0] = 0;
+            if(in_a4[0] > 255) in_a4[0] = 255;
         }
 
 		/* thrust and fire */
