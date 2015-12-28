@@ -1292,7 +1292,7 @@ void retro_run(void)
 		/* thrust and fire */
                 val = ((input_state_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y) / 127));
                 if(val < -2) {
-                        in_a1[0] = 256 - val;
+                        in_a1[0] = 255 - val;
                 } 
                 if (val > 2) {
                         in_a2[1] = val;
