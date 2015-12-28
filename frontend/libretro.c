@@ -60,7 +60,6 @@ int in_a1[2] = { 127, 127 }, in_a2[2] = { 127, 127 };
 int in_a3[2] = { 127, 127 }, in_a4[2] = { 127, 127 };
 int in_keystate;
 int in_enable_vibration = 1;
-int enable_smooth_negcon_twist = 1;
 int pad1analog_maxangle = 180;
 int pad2analog_maxangle = 180;
 
@@ -334,7 +333,6 @@ void retro_set_environment(retro_environment_t cb)
       { "pcsx_rearmed_region", "Region; Auto|NTSC|PAL" },
       { "pcsx_rearmed_pad1type", "Pad 1 Type; standard|analog|negcon" },
       { "pcsx_rearmed_pad2type", "Pad 2 Type; standard|analog|negcon" },
-      { "pcsx_rearmed_enable_smooth_negcon_twist", "Enable smooth neGcon twist; on|off" },
       { "pcsx_rearmed_pad1analog_maxangle", "Pad 1 Max neGcon angle; 180|165|150|135|120|105|90|75|60|45|30|15|0" },
       { "pcsx_rearmed_pad2analog_maxangle", "Pad 2 Max neGcon angle; 180|165|150|135|120|105|90|75|60|45|30|15|0" },
 #ifndef DRC_DISABLE
@@ -1090,17 +1088,6 @@ static void update_variables(bool in_flight)
 
    }
     
-    var.value = "NULL";
-    var.key = "pcsx_rearmed_enable_smooth_negcon_twist";
-    
-    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) || var.value)
-    {
-        if (strcmp(var.value, "off") == 0)
-            enable_smooth_negcon_twist = 0;
-        else if (strcmp(var.value, "on") == 0)
-            enable_smooth_negcon_twist = 1;
-    }
-
     var.value = NULL;
     var.key = "pcsx_rearmed_pad1analog_maxangle";
     
@@ -1298,27 +1285,16 @@ void retro_run(void)
 
 		/* steer */
 		val = (input_state_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X) / 256) + 128;
-        if(enable_smooth_negcon_twist) {
-            if (val > 128) {
-                in_a2[0] = 128 + (val - 144) * pad1sens;
-                if(in_a2[0] > 255) in_a2[0] = 255;
-            } else if (val < 128) {
-                in_a2[0] = 128 + (val - 112) * pad1sens;
-                if(in_a2[0] < 0) in_a2[0] = 0;
-            } else if (val == 128)
-                in_a2[0] = 128;
-        } else {
-            in_a2[0] = 128 + (val - 128) * pad1sens;
-            if(in_a2[0] < 0) in_a2[0] = 0;
-            if(in_a2[0] > 255) in_a2[0] = 255;
-        }
+		in_a2[0] = 128 + (val - 128) * pad1sens;
+		if(in_a2[0] < 0) in_a2[0] = 0;
+		if(in_a2[0] > 255) in_a2[0] = 255;
 
 		/* thrust and fire */
                 val = ((input_state_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y) / 127));
                 if(val < -2) {
                         in_a1[0] = 256 - val;
                 } 
-                 if (val > 2) {
+                if (val > 2) {
                         in_a2[1] = val;
                 } 
                 if(val >= -2 && val <= 2)
@@ -1338,27 +1314,16 @@ void retro_run(void)
 
 		/* steer */
 		val = (input_state_cb(1, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X) / 256) + 128;
-        if(enable_smooth_negcon_twist) {
-            if (val > 128) {
-                in_a4[0] = 128 + (val - 144) * pad2sens;
-                if(in_a4[0] > 255) in_a4[0] = 255;
-            } else if (val < 128) {
-                in_a4[0] = 128 + (val - 112) * pad2sens;
-                if(in_a4[0] < 0) in_a4[0] = 0;
-            } else if (val == 128)
-                in_a4[0] = 128;
-        } else {
-            in_a4[0] = 128 + (val - 128) * pad2sens;
-            if(in_a4[0] < 0) in_a4[0] = 0;
-            if(in_a4[0] > 255) in_a4[0] = 255;
-        }
+		in_a4[0] = 128 + (val - 128) * pad2sens;
+		if(in_a4[0] < 0) in_a4[0] = 0;
+		if(in_a4[0] > 255) in_a4[0] = 255;
 
 		/* thrust and fire */
                 val = ((input_state_cb(1, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y) / 127));
                 if(val < -2) {
-                        in_a3[0] = 256 - val;
+                        in_a3[0] = 255 - val;
                 } 
-                 if (val > 2) {
+                if (val > 2) {
                         in_a4[1] = val;
                 } 
                 if(val >= -2 && val <= 2)
